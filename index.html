@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Assistant ALY</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #a73b3b;
+            background-image: url(https://i.pinimg.com/originals/4f/a3/ac/4fa3acb120355a8754dbd8065d2e60cf.gif);
+            
+            
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: rgb(122, 216, 107);
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: aliceblue;">Voice Assistant ALY</h1>
+        <button id="start">Start Listening</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const startButton = document.getElementById('start');
+        const statusDisplay = document.getElementById('status');
+        let recognition;
+
+        // Initialize speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                console.log("Voice recognition started.");
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toUpperCase();
+                console.log(`Heard: ${transcript}`);
+                statusDisplay.textContent = `Heard: ${transcript}`;
+
+                // Check for the command
+                if (transcript.includes('ALLY')) {
+                    if (transcript.includes('HELP')) {
+                        console.log('HELP command detected. Sending email...');
+                        sendEmail();
+                    } else {
+                        alert('How can I assist you?');
+                    }
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Error occurred in recognition: " + event.error);
+            };
+        } else {
+            console.error("Speech recognition not supported in this browser.");
+        }
+
+        startButton.addEventListener('click', () => {
+            console.log("Start Listening button clicked.");
+            
+            statusDisplay.textContent ="Listening... " ;
+            recognition.start();
+        });
+
+        function sendEmail() {
+            const templateParams = {
+                to_name: 'Recipient Name', // Change to the recipient's name
+                to_email: 'poorvika2836.beai24@chitkara.edu.in', // Change to the recipient's email address
+                message: 'HELP has been requested!', // Customize your message
+            };
+
+            // Replace YOUR_SERVICE_ID and YOUR_TEMPLATE_ID with your actual EmailJS IDs
+            emailjs.send('mail_service', 'template_0nvyrfp', templateParams)
+                .then(() => {
+                    alert('Email sent successfully!');
+                }, (error) => {
+                    alert('Failed to send email: ' + JSON.stringify(error));
+                });
+        }
+    </script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+</body>
+</html>
